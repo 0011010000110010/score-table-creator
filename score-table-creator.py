@@ -31,7 +31,7 @@ Update scores for the turn -> 3\n\
 Exit -> 4\n\n\
 What's your choice?: "))
 
-        # ! create a new excel sheet
+        # ! creating a new excel sheet
         if choice == 1:
             wb = Workbook()
             sheet = wb.active
@@ -57,7 +57,7 @@ What's your choice?: "))
             for row in dataframe_to_rows(df, index=False, header=True):
                 sheet.append(row)
 
-            # ? Style some cells
+            # ? styling some cells
             sheet["A1"].font = Font(bold=True, size=12, italic=True)
 
             for row in range(2, n_players + 2):
@@ -78,18 +78,19 @@ What's your choice?: "))
             for row in range(2, n_players + 2):
                 sheet[f"A{row}"].value = f"=SUM(C{row}:ZZ{row})"
 
+            # ? create table filter
             tab = Table(displayName="players", ref=f"B1:B{n_players + 1}")
             sheet.add_table(tab)
 
             wb.save(path.expanduser(filename))
 
-        # ! check the score table
+        # ! checking the score table
         elif choice == 2:
             read_df = read_excel(path.expanduser(
                 filename), sheet_name=game.upper())
             print(read_df)
 
-        # ! Update scores for the turn
+        # ! updating scores for a defined turn
         elif choice == 3:
             wb = load_workbook(path.expanduser(filename))
             sheet = wb.active
@@ -99,13 +100,9 @@ What's your choice?: "))
                 sheet.cell(row=n, column=round).value = int(
                     input(f"score for player {n - 1}: "))
 
-            sheet.cell(
-                row=n_players + 2, column=round).value = \
-                f"=SUM({sheet.cell(row=2, column=round)}:{sheet.cell(row=n_players + 1, column=round)})"
-
             wb.save(path.expanduser(filename))
 
-        # ! exit from program
+        # ! exiting from program
         elif choice == 4:
             print("The program is closing...")
             sleep(1)
