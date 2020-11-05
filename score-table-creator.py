@@ -1,6 +1,12 @@
 from os import path
-from numpy.core.fromnumeric import shape, size
-from openpyxl import Workbook, load_workbook
+from numpy.core.fromnumeric import (
+    shape,
+    size
+)
+from openpyxl import (
+    Workbook,
+    load_workbook
+)
 from sys import exit
 from time import sleep
 from openpyxl.styles import numbers
@@ -9,26 +15,48 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from numpy import zeros
 from pandas.core.arrays.sparse import dtype
 from math import pow
-from openpyxl.styles import Font, Alignment, colors
+from openpyxl.styles import (
+    Font,
+    Alignment,
+    colors
+)
 from openpyxl.worksheet.table import Table
 from openpyxl.utils import FORMULAE
 from pandas import read_excel
 
 
 def score_table():
+    """
+    The program is creating an excel sheet to keep player's scores for turn-based games that scores are needed to jot down.
 
-    msg = f"\n" + "Welcome to the Score Table Creator".center(50, "*") + "\n"
+    Has 3 choices to use;
+    - Create a score table
+    - Check the score table
+    - Update the score table
+    and 
+    - Exit
+    """
+
+    msg = f"\n" + \
+        ' Welcome to the "Score Table Creator" '.center(100, "*") + "\n"
     print(msg)
-    game = str(input("Enter the name of the game: "))
-    n_players = int(input("How many players you'll play?: "))
+    game = str(
+        input("What's the name of the game?: "))
+    n_players = int(input("\nHow many players you'll play?: "))
+    names = []
+    for n in range(n_players):
+        name = str(input(f"Please enter a name for player {n + 1}: ")).capitalize()
+        names.append(name)
     filename = f"~\\Desktop\\{game}.xlsx"
 
     while True:
         choice = int(input(f"\n\
+*-----------------------------*\n\
 Create a new excel sheet -> 1\n\
 Check the score table -> 2\n\
 Update scores for the turn -> 3\n\
-Exit -> 4\n\n\
+Exit -> 4\n\
+*-----------------------------*\n\
 What's your choice?: "))
 
         # ! creating a new excel sheet
@@ -36,11 +64,6 @@ What's your choice?: "))
             wb = Workbook()
             sheet = wb.active
             sheet.title = game.upper()
-
-            names = []
-            for n in range(n_players):
-                name = str(input("Please enter a player name: ")).capitalize()
-                names.append(name)
 
             # ? creating table with given names
             np_zeros = zeros(
@@ -84,6 +107,13 @@ What's your choice?: "))
 
             wb.save(path.expanduser(filename))
 
+            print(f"\nThe score board for the game that is called \
+{repr(game.capitalize())} is being created with {n_players} players, right now.")
+            sleep(2.5)
+            print(f"\nSetup has been done.\n\n\
+Now, you have the excel file for {repr(game)} in your desktop.")
+            sleep(2)
+
         # ! checking the score table
         elif choice == 2:
             read_df = read_excel(path.expanduser(
@@ -95,12 +125,15 @@ What's your choice?: "))
             wb = load_workbook(path.expanduser(filename))
             sheet = wb.active
 
-            round = int(input("Enter round number: ")) + 2
+            turn = int(input("Which turn you're in?: ")) + 2
             for n in range(2, n_players + 2):
-                sheet.cell(row=n, column=round).value = int(
-                    input(f"score for player {n - 1}: "))
+                sheet.cell(row=n, column=turn).value = int(
+                    input(f"What is the score of {names[n - 2]} for turn {turn - 2}: "))
 
             wb.save(path.expanduser(filename))
+
+            print(
+                f"The score table of {game.capitalize()} is edited for turn {turn - 2}.")
 
         # ! exiting from program
         elif choice == 4:
